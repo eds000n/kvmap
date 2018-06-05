@@ -4,9 +4,9 @@ A simple implementation of a map with multiple access through a RESTful API with
 
 ## Prerequisites
 * [restbed](https://github.com/Corvusoft/restbed)
-* [dialog]
-See the build details for restbed
-You can install dialog with yum, apt-get or brew.
+* dialog
+
+Restbed can be installed with cmake and you can install dialog with yum, apt-get or brew.
 
 ## Build
 ```
