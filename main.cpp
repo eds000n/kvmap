@@ -13,16 +13,6 @@
 KVMap kvmap(MAX_SIZE);
 void putValueHandler(const shared_ptr<Session> session){
   kvmap.putValueHandler(session);
-  /*const auto request = session->get_request();
-  cout << request->get_method() << endl;
-  cout << request->get_query_parameter("key") << endl;
-  cout << request->get_query_parameter("value") << endl;
-  int content_length = request->get_header( "Content-Length",0);
-  *///session->fetch(content_length, [](const shared_ptr<Session> session, const Bytes & body ){
-
-    //const auto request = session->get_request();
-    //session->close( OK, "put    value!", { { "Content-Length", "13" } } );
- // });
 }
 
 void deleteValueHandler(const shared_ptr<Session> session){

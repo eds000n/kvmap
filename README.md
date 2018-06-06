@@ -13,6 +13,7 @@ Restbed can be installed with cmake and you can install dialog with yum, apt-get
 mkdir build
 cd build
 cmake ..
+make
 ```
 
 ## Configuration

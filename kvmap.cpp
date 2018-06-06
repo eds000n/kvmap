@@ -26,10 +26,6 @@ int KVMap::evict(int n) {
 
   //debug(); 
   return 0;
-  /*} else {
-    cout << "Unable to open file";
-    return 1;
-  }*/
 }
 
 /**
@@ -69,6 +65,7 @@ int KVMap::getSwap(string key) {
   }
   return 1;
 }
+
 /**
  * putValue adds a value to the hashtable
  * @param key 
@@ -183,9 +180,6 @@ int KVMap::getValue(string key, string& value) {
 
 void KVMap::putValueHandler(const shared_ptr<Session> session) {
   const auto request = session->get_request( );
-  //const auto parameters = request->get_query_parameters("key");
-
-  //int content_length = request->get_header( "Content-Length", 0 );
 
   string key   = request->get_query_parameter("key");
   string value = request->get_query_parameter("value");
@@ -193,64 +187,44 @@ void KVMap::putValueHandler(const shared_ptr<Session> session) {
 
   if ( key != "" && value != "" ){
     int r = putValue(key, value);
-    if ( r == 0 )
-      session->close( OK, "put    value!", { { "Content-Length", "13" } } );
-    else
-      session->close( OK, "!  put value!", { { "Content-Length", "13" } } );
+    if ( r == 0 ){
+      string msg = "pair inserted";
+      session->close( OK, msg, { { "Content-Length", to_string(msg.length()) } } );
+    } else {
+      string msg = "pair not inserted";
+      session->close( OK, msg, { { "Content-Length", to_string(msg.length()) } } );
+    }
   } else {
-    session->close( OK, "invalid pair!", { { "Content-Length", "13" } } );
+    string msg = "key or value cannot be empty";
+    session->close( OK, msg, { { "Content-Length", to_string(msg.length()) } } );
   }
 
-  /*session->fetch( content_length, [ r ]( const shared_ptr< Session > session, const Bytes & body )
-      {
-  const auto request = session->get_request( );
-  printf("port %d", request->get_port() );
-  const auto parameters = request->get_query_parameters("key");
-  for ( const auto parameter : parameters ) 
-    printf( "-> %s\n", parameter.second.c_str() );
-  fprintf( stdout, "key:%s,value:%s\n", request->has_query_parameter("key") ? "true":"false", request->has_query_parameter("value")? "true":"false" );
-  fprintf( stdout, "key:%s,value:%s\n", request->get_query_parameter("key", "").c_str(), request->get_query_parameter("value", "").c_str() );
-      fprintf( stdout, "%.*s\n", ( int ) body.size( ), body.data( ) );
-      if ( r == 0 )
-      else 
-        session->close( OK, "!  put value!", { { "Content-Length", "13" } } );
-      } );*/
 }
 
 void KVMap::deleteValueHandler(const shared_ptr<Session> session) {
   const auto request = session->get_request( );
   string key = request->get_query_parameter("key");
-  if ( deleteValue(key) == 0 )
-    session->close( OK, "delete Value!", { { "Content-Length", "13" } } );
-  else 
-    session->close( OK, "!delete Value", { { "Content-Length", "13" } } );
+  if ( deleteValue(key) == 0 ){
+    string msg = "deleted key";
+    session->close( OK, msg, { { "Content-Length", to_string(msg.length()) } } );
+  } else {
+    string msg = "invalid key";
+    session->close( OK, msg, { { "Content-Length", to_string(msg.length()) } } );
+  }
 }
 
 void KVMap::getValueHandler(const shared_ptr<Session> session) {
   const auto request = session->get_request( );
   string value;
   string key = request->get_query_parameter("key");
-  if ( getValue(key, value) == 0 )
+  if ( getValue(key, value) == 0 ) {
     session->close( OK, value, { { "Content-Length", to_string(value.length() ) } } );
-  else
-    session->close( OK, "not found!", { { "Content-Length", "10" } } );
+  } else {
+    string msg = "key not found";
+    session->close( OK, msg, { { "Content-Length", to_string(msg.length()) } } );
+  }
 
 }
-
-/*void post_method_handler( const shared_ptr< Session > session )
-{
-  const auto request = session->get_request( );
-
-  int content_length = request->get_header( "Content-Length", 0 );
-
-  session->fetch( content_length, [ ]( const shared_ptr< Session > session, const Bytes & body )
-      {
-      fprintf( stdout, "%.*s\n", ( int ) body.size( ), body.data( ) );
-      session->close( OK, "Hello, World!", { { "Content-Length", "13" } } );
-      } );
-}
-
-*/
 
 void KVMap::debug() {
   cout << "DEBUG" << endl;
