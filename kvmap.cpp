@@ -172,12 +172,20 @@ int KVMap::getValue(string key, string& value) {
   if ( hash.find(key)  != hash.end() ){
     value=hash[key].first;
     cout << "got (" << key << "," << value << ")" << endl;
+    //For LRU update the list so the least used remain at the end
+    fifo.erase(hash[key].second);
+    fifo.push_front(key);
+    list<string>::iterator it = fifo.begin();
+    hash[key]=make_pair(value,it);
+    debug();
     return 0;
   } else if ( getSwap(key) == 0 ) {
     value=hash[key].first;
     cout << "got (" << key << "," << value << ")" << endl;
+    debug();
     return 0;
   } else {
+    debug();
     return 1;
   }
 }

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 host="http://localhost:3000"
-for i in `seq 1 7`
+for i in `seq 1 1000`
 do
   key=$RANDOM
   f=$(fortune)
