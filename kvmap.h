@@ -40,7 +40,8 @@ private:
   //std::map<string, Node> hash;
   //Node* front;
   //Node* back;
-  std::map<string, string> hash;
+  std::map<string, pair<string,list<string>::iterator> > hash;
+  //std::map<string, string> hash;
   std::list<string> fifo;
   string swapFileName;
   int size ;

@@ -16,7 +16,7 @@ int KVMap::evict(int n) {
   for (int k=0; k<n; k++){
     // Fill persistent memory
     std::list<string>::reverse_iterator rit=fifo.rbegin(); 
-    swap << *rit << " " << hash[*rit] << endl;
+    swap << *rit << " " << hash[*rit].first << endl;
     // Clean memory
     list<string>::iterator it = next(rit).base();
     fifo.erase(it);
@@ -82,7 +82,8 @@ int KVMap::putValue(string key, string value) {
 
   if ( hash.find(key) == hash.end() )
     fifo.push_front(key);
-  hash[key]=value;
+  list<string>::iterator it = fifo.begin();
+  hash[key]=make_pair(value, it);
 
   cout << "inserted (" << key << "," << value << ")" << endl;
   debug();
@@ -130,11 +131,12 @@ int KVMap::putValue(string key, string value) {
 int KVMap::deleteValue(string key){ 
   if ( hash.find(key) != hash.end() ){
     ////////////////////////////////// FIXME: too slow
-    for (std::list<string>::iterator it=fifo.begin(); it != fifo.end(); ++it)
+    /*for (std::list<string>::iterator it=fifo.begin(); it != fifo.end(); ++it)
       if ( *it == key ) {
         fifo.erase(it);
         break;
-      }
+      }*/
+    fifo.erase(hash[key].second);
     ////////////////////////////////// 
     hash.erase(key);
     cout << "deleted (" << key << ")" << endl;
@@ -142,11 +144,13 @@ int KVMap::deleteValue(string key){
     return 0;
   } else if ( getSwap(key) == 0 ) {
     ////////////////////////////////// FIXME: too slow
-    for (std::list<string>::iterator it=fifo.begin(); it != fifo.end(); ++it)
+    /*for (std::list<string>::iterator it=fifo.begin(); it != fifo.end(); ++it)
       if ( *it == key ) {
         fifo.erase(it);
         break;
-      }
+      }*/
+    fifo.erase(hash[key].second);
+
     ////////////////////////////////// 
 
     hash.erase(key);
@@ -166,11 +170,11 @@ int KVMap::deleteValue(string key){
  */
 int KVMap::getValue(string key, string& value) {
   if ( hash.find(key)  != hash.end() ){
-    value=hash[key];
+    value=hash[key].first;
     cout << "got (" << key << "," << value << ")" << endl;
     return 0;
   } else if ( getSwap(key) == 0 ) {
-    value=hash[key];
+    value=hash[key].first;
     cout << "got (" << key << "," << value << ")" << endl;
     return 0;
   } else {
